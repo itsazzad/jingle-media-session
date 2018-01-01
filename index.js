@@ -3,6 +3,7 @@ var extend = require('extend-object');
 var BaseSession = require('jingle-session');
 var RTCPeerConnection = require('rtcpeerconnection');
 
+
 function filterContentSources(content, stream) {
     if (content.application.applicationType !== 'rtp') {
         return;
@@ -16,7 +17,7 @@ function filterContentSources(content, stream) {
         content.application.sources = content.application.sources.filter(function (source) {
             // if there's no msid, ignore it
             if (source.parameters.length < 2) {
-                return false;
+              return false;
             }
             return stream.id === source.parameters[1].value.split(' ')[0];
         });
@@ -52,7 +53,7 @@ function MediaSession(opts) {
 
     this.pc = new RTCPeerConnection({
         iceServers: opts.iceServers || [],
-        useJingle: opts.useJingle !== 'undefined' ? opts.useJingle : true,
+        useJingle: true
     }, opts.constraints || {});
 
     this.pc.on('ice', this.onIceCandidate.bind(this, opts));
@@ -106,8 +107,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
         var self = this;
         this.state = 'pending';
 
-        next = next || function () {
-        };
+        next = next || function () {};
 
         this.pc.isInitiator = true;
         this.pc.offer(offerOptions, function (err, offer) {
@@ -157,8 +157,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
             next = opts;
             opts = {};
         }
-        next = next || function () {
-        };
+        next = next || function () {};
         opts = opts || {};
 
         self.constraints = opts.constraints || {
@@ -189,7 +188,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     end: function (reason, silent) {
         var self = this;
         this.streams.forEach(function (stream) {
-            self.onRemoveStream({ stream: stream });
+            self.onRemoveStream({stream: stream});
         });
         this.pc.close();
         BaseSession.prototype.end.call(this, reason, silent);
@@ -198,7 +197,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     ring: function () {
         this._log('info', 'Ringing on incoming session');
         this.ringing = true;
-        this.send('session-info', { ringing: true });
+        this.send('session-info', {ringing: true});
     },
 
     mute: function (creator, name) {
@@ -224,12 +223,12 @@ MediaSession.prototype = extend(MediaSession.prototype, {
 
     hold: function () {
         this._log('info', 'Placing on hold');
-        this.send('session-info', { hold: true });
+        this.send('session-info', {hold: true});
     },
 
     resume: function () {
         this._log('info', 'Resuming from hold');
-        this.send('session-info', { active: true });
+        this.send('session-info', {active: true});
     },
 
     // ----------------------------------------------------------------
@@ -239,8 +238,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     addStream: function (stream, renegotiate, cb) {
         var self = this;
 
-        cb = cb || function () {
-        };
+        cb = cb || function () {};
 
         this.pc.addStream(stream);
 
@@ -284,8 +282,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     removeStream: function (stream, renegotiate, cb) {
         var self = this;
 
-        cb = cb || function () {
-        };
+        cb = cb || function () {};
 
         if (!renegotiate) {
             this.pc.removeStream(stream);
@@ -331,8 +328,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     switchStream: function (oldStream, newStream, cb) {
         var self = this;
 
-        cb = cb || function () {
-        };
+        cb = cb || function () {};
 
         var desc = this.pc.localDescription;
         desc.contents.forEach(function (content) {
@@ -450,7 +446,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
         }, function (err) {
             if (err) {
                 self._log('error', 'Could not create WebRTC answer');
-                return cb({ condition: 'general-error' });
+                return cb({condition: 'general-error'});
             }
             cb();
         });
@@ -466,7 +462,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
         }, function (err) {
             if (err) {
                 self._log('error', 'Could not process WebRTC answer');
-                return cb({ condition: 'general-error' });
+                return cb({condition: 'general-error'});
             }
             self.emit('accepted', self);
             cb();
@@ -478,7 +474,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
 
         this._log('info', 'Terminating session');
         this.streams.forEach(function (stream) {
-            self.onRemoveStream({ stream: stream });
+            self.onRemoveStream({stream: stream});
         });
         this.pc.close();
         BaseSession.prototype.end.call(this, changes.reason, true);
