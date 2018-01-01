@@ -2,11 +2,8 @@ var util = require('util');
 var extend = require('extend-object');
 var BaseSession = require('jingle-session');
 var RTCPeerConnection = require('rtcpeerconnection');
-var customConsole = require('../custom-console');
-var sourceFileName = 'jingle-media-session';
 
 function filterContentSources(content, stream) {
-    customConsole(sourceFileName, arguments.callee.name, ...arguments);
     if (content.application.applicationType !== 'rtp') {
         return;
     }
@@ -40,7 +37,6 @@ function filterContentSources(content, stream) {
 }
 
 function filterUnusedLabels(content) {
-    customConsole(sourceFileName, arguments.callee.name, ...arguments);
     // Remove mslabel and label ssrc-specific attributes
     var sources = content.application.sources || [];
     sources.forEach(function (source) {
@@ -52,7 +48,6 @@ function filterUnusedLabels(content) {
 
 
 function MediaSession(opts) {
-    customConsole(sourceFileName, arguments.callee.name, ...arguments);
     BaseSession.call(this, opts);
 
     this.pc = new RTCPeerConnection({
@@ -108,7 +103,6 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     // ----------------------------------------------------------------
 
     start: function (offerOptions, next) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         var self = this;
         this.state = 'pending';
 
@@ -156,7 +150,6 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     accept: function (opts, next) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         var self = this;
 
         // support calling with accept(next) or accept(opts, next)
@@ -194,7 +187,6 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     end: function (reason, silent) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         var self = this;
         this.streams.forEach(function (stream) {
             self.onRemoveStream({ stream: stream });
@@ -204,14 +196,12 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     ring: function () {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         this._log('info', 'Ringing on incoming session');
         this.ringing = true;
         this.send('session-info', { ringing: true });
     },
 
     mute: function (creator, name) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         this._log('info', 'Muting', name);
 
         this.send('session-info', {
@@ -223,7 +213,6 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     unmute: function (creator, name) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         this._log('info', 'Unmuting', name);
         this.send('session-info', {
             unmute: {
@@ -234,13 +223,11 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     hold: function () {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         this._log('info', 'Placing on hold');
         this.send('session-info', { hold: true });
     },
 
     resume: function () {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         this._log('info', 'Resuming from hold');
         this.send('session-info', { active: true });
     },
@@ -250,7 +237,6 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     // ----------------------------------------------------------------
 
     addStream: function (stream, renegotiate, cb) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         var self = this;
 
         cb = cb || function () {
@@ -292,12 +278,10 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     addStream2: function (stream, cb) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         this.addStream(stream, true, cb);
     },
 
     removeStream: function (stream, renegotiate, cb) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         var self = this;
 
         cb = cb || function () {
@@ -341,12 +325,10 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     removeStream2: function (stream, cb) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         this.removeStream(stream, true, cb);
     },
 
     switchStream: function (oldStream, newStream, cb) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         var self = this;
 
         cb = cb || function () {
@@ -390,7 +372,6 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     // ----------------------------------------------------------------
 
     onIceCandidate: function (opts, candidate) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         this._log('info', 'Discovered new ICE candidate', candidate.jingle);
         this.send('transport-info', candidate.jingle);
         if (opts.signalEndOfCandidates) {
@@ -399,7 +380,6 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     onIceEndOfCandidates: function (opts) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         this._log('info', 'ICE end of candidates');
         if (opts.signalEndOfCandidates) {
             var endOfCandidates = this.lastCandidate.jingle;
@@ -413,7 +393,6 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     onIceStateChange: function () {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         switch (this.pc.iceConnectionState) {
             case 'checking':
                 this.connectionState = 'connecting';
@@ -444,13 +423,11 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     // ----------------------------------------------------------------
 
     onAddStream: function (event) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         this._log('info', 'Stream added');
         this.emit('peerStreamAdded', this, event.stream);
     },
 
     onRemoveStream: function (event) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         this._log('info', 'Stream removed');
         this.emit('peerStreamRemoved', this, event.stream);
     },
@@ -460,7 +437,6 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     // ----------------------------------------------------------------
 
     onSessionInitiate: function (changes, cb) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         var self = this;
 
         this._log('info', 'Initiating incoming session');
@@ -481,7 +457,6 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     onSessionAccept: function (changes, cb) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         var self = this;
 
         this.state = 'active';
@@ -499,7 +474,6 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     onSessionTerminate: function (changes, cb) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         var self = this;
 
         this._log('info', 'Terminating session');
@@ -513,7 +487,6 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     onSessionInfo: function (info, cb) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         if (info.ringing) {
             this._log('info', 'Outgoing session is ringing');
             this.ringing = true;
@@ -549,14 +522,12 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     onTransportInfo: function (changes, cb) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         this.pc.processIce(changes, function () {
             cb();
         });
     },
 
     onSourceAdd: function (changes, cb) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         var self = this;
         this._log('info', 'Adding new stream source');
 
@@ -611,7 +582,6 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     onSourceRemove: function (changes, cb) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         var self = this;
         this._log('info', 'Removing stream source');
 
@@ -700,7 +670,6 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     // DataChannels
     // ----------------------------------------------------------------
     onAddChannel: function (channel) {
-        customConsole(sourceFileName, arguments.callee.name, ...arguments);
         this.emit('addChannel', channel);
     }
 });
