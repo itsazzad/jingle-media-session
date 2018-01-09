@@ -16,7 +16,7 @@
     "covert": "^1.0.0",
     "jshint": "^2.5.5",
     "nsp": "^0.2.6",
-    "precommit-hook": "^3.0.0",
+    "precommit-hook": "^1.0.7",
     "tap-spec": "^0.2.1",
     "tape": "^2.14.0",
     "uglify-js": "^2.4.15"
@@ -35,11 +35,6 @@
   },
   "scripts": {
     "audit": "make audit",
-    "build": "make build",
-    "lint": "jshint .",
-    "validate": "npm ls"
-  },
-  "pre-commit": [
-    "lint"
-  ]
+    "build": "make build"
+  }
 }
