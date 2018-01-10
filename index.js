@@ -49,6 +49,8 @@ function filterUnusedLabels(content) {
 
 
 function MediaSession(opts) {
+    this.useJingle = (opts.useJingle !== 'undefined') ? opts.useJingle : true;
+
     BaseSession.call(this, opts);
 
     this.pc = new RTCPeerConnection({
@@ -138,7 +140,18 @@ MediaSession.prototype = extend(MediaSession.prototype, {
 
             offer.jingle.contents.forEach(filterUnusedLabels);
 
-            self.send('session-initiate', offer.jingle);
+            var action = 'session-initiate';
+            if(self.useJingle === false){
+                var signal = {
+                    action: self.mappedActions(action),
+                    callinitiator: self.parent.jid.bare,
+                    sdp: window.btoa(offer.sdp),
+                    starttime: Date.now(),
+                    type: 'AUDIO',
+                };
+            }
+            console.error('XXX', self.useJingle, signal, offer.sdp);
+            self.send(action, (self.useJingle === false) ? signal : offer.jingle);
 
             next();
         });
