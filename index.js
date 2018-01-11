@@ -146,6 +146,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
                     action: self.mappedActions(action),
                     callinitiator: self.parent.jid.bare,
                     sdp: window.btoa(offer.sdp),
+                    duration: '00 : 00',
                     starttime: Date.now(),
                     type: 'AUDIO',
                 };
