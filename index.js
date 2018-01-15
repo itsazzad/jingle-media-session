@@ -151,7 +151,6 @@ MediaSession.prototype = extend(MediaSession.prototype, {
                     type: 'AUDIO',
                 };
             }
-            console.error('XXX', self.useJingle, signal, offer.sdp);
             self.send(action, (self.useJingle === false) ? signal : offer.jingle);
 
             next();
@@ -245,6 +244,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     // ----------------------------------------------------------------
 
     addStream: function (stream, renegotiate, cb) {
+        console.error('XXX', 'addStream', this.pc.remoteDescription);
         var self = this;
 
         cb = cb || function () {};
@@ -289,6 +289,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     removeStream: function (stream, renegotiate, cb) {
+        console.error('XXX', 'removeStream', this.pc.remoteDescription);
         var self = this;
 
         cb = cb || function () {};
@@ -335,6 +336,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     switchStream: function (oldStream, newStream, cb) {
+        console.error('XXX', 'switchStream', this.pc.remoteDescription);
         var self = this;
 
         cb = cb || function () {};
@@ -442,6 +444,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     // ----------------------------------------------------------------
 
     onSessionInitiate: function (changes, cb) {
+        console.error('XXX', 'onSessionInitiate', changes);
         var self = this;
 
         this._log('info', 'Initiating incoming session');
@@ -462,6 +465,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     onSessionAccept: function (changes, cb) {
+        console.error('XXX', 'onSessionAccept', changes);
         var self = this;
 
         this.state = 'active';
@@ -533,6 +537,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     onSourceAdd: function (changes, cb) {
+        console.error('XXX', 'onSourceAdd', this.pc.remoteDescription);
         var self = this;
         this._log('info', 'Adding new stream source');
 
@@ -587,6 +592,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     onSourceRemove: function (changes, cb) {
+        console.error('XXX', 'onSourceRemove', this.pc.remoteDescription);
         var self = this;
         this._log('info', 'Removing stream source');
 
