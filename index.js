@@ -158,6 +158,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     accept: function (opts, next) {
+        console.error('MediaSession XXX', 'accept', opts, next);
         var self = this;
 
         // support calling with accept(next) or accept(opts, next)
@@ -465,7 +466,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     onSessionAccept: function (changes, cb) {
-        console.error('XXX', 'onSessionAccept', changes);
+        console.error('MediaSession XXX', 'onSessionAccept', changes);
         var self = this;
 
         this.state = 'active';
