@@ -140,25 +140,13 @@ MediaSession.prototype = extend(MediaSession.prototype, {
 
             offer.jingle.contents.forEach(filterUnusedLabels);
 
-            var action = 'session-initiate';
-            if(self.useJingle === false){
-                var signal = {
-                    action: self.mappedActions(action),
-                    callinitiator: self.parent.jid.bare,
-                    sdp: window.btoa(offer.sdp),
-                    duration: '00 : 00',
-                    starttime: Date.now(),
-                    type: 'AUDIO',
-                };
-            }
-            self.send(action, (self.useJingle === false) ? signal : offer.jingle);
+            self.send('session-initiate', (self.useJingle === false) ? offer : offer.jingle);
 
             next();
         });
     },
 
     accept: function (opts, next) {
-        console.error('MediaSession XXX', 'accept', opts, next);
         var self = this;
 
         // support calling with accept(next) or accept(opts, next)
@@ -188,7 +176,8 @@ MediaSession.prototype = extend(MediaSession.prototype, {
 
             answer.jingle.contents.forEach(filterUnusedLabels);
 
-            self.send('session-accept', answer.jingle);
+            console.error('JJJ', 'MediaSession', 'session-accept', answer);
+            self.send('session-accept', (self.useJingle === false) ? answer : answer.jingle);
 
             next();
         });
@@ -245,7 +234,6 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     // ----------------------------------------------------------------
 
     addStream: function (stream, renegotiate, cb) {
-        console.error('XXX', 'addStream', this.pc.remoteDescription);
         var self = this;
 
         cb = cb || function () {};
@@ -290,7 +278,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     removeStream: function (stream, renegotiate, cb) {
-        console.error('XXX', 'removeStream', this.pc.remoteDescription);
+        console.error('JJJ', 'removeStream', this.pc.remoteDescription);
         var self = this;
 
         cb = cb || function () {};
@@ -337,7 +325,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     switchStream: function (oldStream, newStream, cb) {
-        console.error('XXX', 'switchStream', this.pc.remoteDescription);
+        console.error('JJJ', 'switchStream', this.pc.remoteDescription);
         var self = this;
 
         cb = cb || function () {};
@@ -381,7 +369,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
 
     onIceCandidate: function (opts, candidate) {
         this._log('info', 'Discovered new ICE candidate', candidate.jingle);
-        this.send('transport-info', candidate.jingle);
+        this.send('transport-info', (this.useJingle === false) ? candidate : candidate.jingle);
         if (opts.signalEndOfCandidates) {
             this.lastCandidate = candidate;
         }
@@ -445,7 +433,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     // ----------------------------------------------------------------
 
     onSessionInitiate: function (changes, cb) {
-        console.error('XXX', 'onSessionInitiate', changes);
+        console.error('JJJ', 'onSessionInitiate', changes);
         var self = this;
 
         this._log('info', 'Initiating incoming session');
@@ -466,7 +454,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     onSessionAccept: function (changes, cb) {
-        console.error('MediaSession XXX', 'onSessionAccept', changes);
+        console.error('JJJ', 'MediaSession', 'onSessionAccept', changes);
         var self = this;
 
         this.state = 'active';
@@ -532,13 +520,14 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     onTransportInfo: function (changes, cb) {
+        console.error('JJJ', 'jingle-media-session', 'onTransportInfo', changes);
         this.pc.processIce(changes, function () {
             cb();
         });
     },
 
     onSourceAdd: function (changes, cb) {
-        console.error('XXX', 'onSourceAdd', this.pc.remoteDescription);
+        console.error('JJJ', 'onSourceAdd', this.pc.remoteDescription);
         var self = this;
         this._log('info', 'Adding new stream source');
 
@@ -593,7 +582,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
     },
 
     onSourceRemove: function (changes, cb) {
-        console.error('XXX', 'onSourceRemove', this.pc.remoteDescription);
+        console.error('JJJ', 'onSourceRemove', this.pc.remoteDescription);
         var self = this;
         this._log('info', 'Removing stream source');
 
