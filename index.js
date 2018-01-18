@@ -50,7 +50,6 @@ function filterUnusedLabels(content) {
 
 function MediaSession(opts) {
     this.useJingle = (opts.useJingle !== 'undefined') ? opts.useJingle : true;
-
     BaseSession.call(this, opts);
 
     this.pc = new RTCPeerConnection({
