@@ -113,7 +113,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
         this.pc.isInitiator = true;
         this.pc.offer(offerOptions, function (err, offer) {
             if (err) {
-                self._log('error', 'Could not create WebRTC offer', err);
+                self._log('error', 'Could not create WebRTC offer', {err, offerOptions });
                 return self.end('failed-application', true);
             }
 
@@ -169,7 +169,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
 
         this.pc.answer(self.constraints, function (err, answer) {
             if (err) {
-                self._log('error', 'Could not create WebRTC answer', err);
+                self._log('error', 'Could not create WebRTC answer', {err, constraints: self.constraints});
                 return self.end('failed-application');
             }
 
@@ -249,12 +249,12 @@ MediaSession.prototype = extend(MediaSession.prototype, {
             jingle: this.pc.remoteDescription
         }, function (err) {
             if (err) {
-                self._log('error', 'Could not create offer for adding new stream');
+                self._log('error', 'Could not create offer for adding new stream', err);
                 return cb(err);
             }
             self.pc.answer(self.constraints, function (err, answer) {
                 if (err) {
-                    self._log('error', 'Could not create answer for adding new stream');
+                    self._log('error', 'Could not create answer for adding new stream', {err, constraints: self.constraints});
                     return cb(err);
                 }
                 answer.jingle.contents.forEach(function (content) {
@@ -304,12 +304,12 @@ MediaSession.prototype = extend(MediaSession.prototype, {
             jingle: this.pc.remoteDescription
         }, function (err) {
             if (err) {
-                self._log('error', 'Could not process offer for removing stream');
+                self._log('error', 'Could not process offer for removing stream', err);
                 return cb(err);
             }
             self.pc.answer(self.constraints, function (err) {
                 if (err) {
-                    self._log('error', 'Could not process answer for removing stream');
+                    self._log('error', 'Could not process answer for removing stream', {err, constraints: self.constraints});
                     return cb(err);
                 }
                 cb();
@@ -341,12 +341,12 @@ MediaSession.prototype = extend(MediaSession.prototype, {
             jingle: this.pc.remoteDescription
         }, function (err) {
             if (err) {
-                self._log('error', 'Could not process offer for switching streams');
+                self._log('error', 'Could not process offer for switching streams', err);
                 return cb(err);
             }
             self.pc.answer(self.constraints, function (err, answer) {
                 if (err) {
-                    self._log('error', 'Could not process answer for switching streams');
+                    self._log('error', 'Could not process answer for switching streams', err);
                     return cb(err);
                 }
                 answer.jingle.contents.forEach(function (content) {
@@ -440,8 +440,9 @@ MediaSession.prototype = extend(MediaSession.prototype, {
             type: 'offer',
             jingle: changes
         }, function (err) {
+            console.error('RORRE', err);
             if (err) {
-                self._log('error', 'Could not create WebRTC answer');
+                self._log('error', 'Could not initiate WebRTC session', {err, changes});
                 return cb({condition: 'general-error'});
             }
             cb();
@@ -457,7 +458,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
             jingle: changes
         }, function (err) {
             if (err) {
-                self._log('error', 'Could not process WebRTC answer');
+                self._log('error', 'Could not process WebRTC answer', {err, changes});
                 return cb({condition: 'general-error'});
             }
             self.emit('accepted', self);
@@ -555,7 +556,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
             jingle: newDesc
         }, function (err) {
             if (err) {
-                self._log('error', 'Error adding new stream source');
+                self._log('error', 'Error adding new stream source', {err, newDesc});
                 return cb({
                     condition: 'general-error'
                 });
@@ -563,7 +564,7 @@ MediaSession.prototype = extend(MediaSession.prototype, {
 
             self.pc.answer(self.constraints, function (err) {
                 if (err) {
-                    self._log('error', 'Error adding new stream source');
+                    self._log('error', 'Error adding new stream source', {err, constraints: self.constraints});
                     return cb({
                         condition: 'general-error'
                     });
@@ -641,14 +642,14 @@ MediaSession.prototype = extend(MediaSession.prototype, {
             jingle: newDesc
         }, function (err) {
             if (err) {
-                self._log('error', 'Error removing stream source');
+                self._log('error', 'Error removing stream source', {err, newDesc});
                 return cb({
                     condition: 'general-error'
                 });
             }
             self.pc.answer(self.constraints, function (err) {
                 if (err) {
-                    self._log('error', 'Error removing stream source');
+                    self._log('error', 'Error removing stream source', {err, constraints: self.constraints});
                     return cb({
                         condition: 'general-error'
                     });
