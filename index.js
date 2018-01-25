@@ -440,7 +440,6 @@ MediaSession.prototype = extend(MediaSession.prototype, {
             type: 'offer',
             jingle: changes
         }, function (err) {
-            console.error('RORRE', err);
             if (err) {
                 self._log('error', 'Could not initiate WebRTC session', {err, changes});
                 return cb({condition: 'general-error'});
